@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 
 class MakeModuleCommand extends Command
 {
-    protected $signature = 'make:module {name : The module name}';
+    protected $signature = 'make:module {name : The module name} {--skip-confirmation : Skip confirmation prompt} {--alias= : Custom route alias}';
     protected $description = 'Create a new module';
 
     public function handle()
@@ -21,13 +21,124 @@ class MakeModuleCommand extends Command
             return 1;
         }
 
-        $this->createModuleStructure($moduleName, $modulePath);
-        $this->info("Module '{$moduleName}' created successfully at: {$modulePath}");
+        // Ask for confirmation unless skipped
+        if (!$this->option('skip-confirmation')) {
+            $this->info("Creating new module: {$moduleName}");
+            $this->newLine();
+            
+            if (!$this->confirm("Do you want to create this module?", true)) {
+                $this->info('Module creation cancelled.');
+                return 0;
+            }
+        }
+
+        // Get route alias
+        $routeAlias = $this->getRouteAlias($moduleName);
+
+        $this->createModuleStructure($moduleName, $modulePath, $routeAlias);
+        
+        $this->newLine();
+        $this->info("Module '{$moduleName}' created successfully!");
+        $this->line("Location: {$modulePath}");
+        
+        if ($routeAlias) {
+            $this->line("Route alias: {$routeAlias}");
+        }
+        
+        $this->newLine();
+        $this->comment("Next steps:");
+        $this->line("  1. php artisan module:enable {$moduleName}");
+        $this->line("  2. Add your routes in modules/{$moduleName}/routes/");
+        $this->line("  3. Create controllers, models, etc.");
 
         return 0;
     }
 
-    protected function createModuleStructure(string $moduleName, string $modulePath): void
+    protected function getRouteAlias(string $moduleName): ?string
+    {
+        // If alias provided via option, use it
+        if ($this->option('alias')) {
+            $alias = $this->option('alias');
+            if ($this->checkRouteAliasAvailable($alias)) {
+                return $alias;
+            }
+            $this->warn("Route alias '{$alias}' is already in use.");
+        }
+
+        // Generate suggested alias
+        $suggestedAlias = $this->generateSuggestedAlias($moduleName);
+        
+        $this->newLine();
+        $this->info("Route Alias Configuration");
+        $this->line("Module: {$moduleName}");
+        $this->line("Suggested alias: {$suggestedAlias}");
+        
+        $choice = $this->choice(
+            'Choose route alias option',
+            [
+                'use_suggested' => "Use suggested ({$suggestedAlias})",
+                'custom' => 'Enter custom alias',
+                'skip' => 'Skip (use default)'
+            ],
+            'use_suggested'
+        );
+
+        if ($choice === 'skip') {
+            return null;
+        }
+
+        if ($choice === 'use_suggested') {
+            if ($this->checkRouteAliasAvailable($suggestedAlias)) {
+                return $suggestedAlias;
+            }
+            $this->warn("Suggested alias '{$suggestedAlias}' is already in use.");
+            $choice = 'custom';
+        }
+
+        if ($choice === 'custom') {
+            $attempts = 0;
+            while ($attempts < 3) {
+                $customAlias = $this->ask("Enter custom route alias", $suggestedAlias);
+                
+                if (empty($customAlias)) {
+                    return null;
+                }
+
+                if ($this->checkRouteAliasAvailable($customAlias)) {
+                    return $customAlias;
+                }
+
+                $this->error("Route alias '{$customAlias}' is already in use. Please try a different one.");
+                $attempts++;
+            }
+
+            $this->warn("Maximum attempts reached. Module will be created without custom route alias.");
+        }
+
+        return null;
+    }
+
+    protected function generateSuggestedAlias(string $moduleName): string
+    {
+        // Convert PascalCase to kebab-case
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $moduleName));
+    }
+
+    protected function checkRouteAliasAvailable(string $alias): bool
+    {
+        $routes = \Illuminate\Support\Facades\Route::getRoutes();
+        
+        foreach ($routes as $route) {
+            $prefix = $route->getPrefix();
+            if ($prefix === $alias || str_starts_with($prefix, $alias . '/')) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    protected function createModuleStructure(string $moduleName, string $modulePath, ?string $routeAlias = null): void
     {
         $directories = [
             'Providers',
@@ -63,9 +174,10 @@ class MakeModuleCommand extends Command
             $this->getServiceProviderStub($moduleName)
         );
 
-        File::put("{$modulePath}/routes/api.php", $this->getApiRoutesStub($moduleName));
-        File::put("{$modulePath}/routes/web.php", $this->getWebRoutesStub($moduleName));
-        File::put("{$modulePath}/config/{$moduleName}.php", $this->getConfigStub($moduleName));
+        $alias = $routeAlias ?: strtolower($moduleName);
+        File::put("{$modulePath}/routes/api.php", $this->getApiRoutesStub($moduleName, $alias));
+        File::put("{$modulePath}/routes/web.php", $this->getWebRoutesStub($moduleName, $alias));
+        File::put("{$modulePath}/config/{$moduleName}.php", $this->getConfigStub($moduleName, $routeAlias));
         File::put("{$modulePath}/README.md", $this->getReadmeStub($moduleName));
     }
 
@@ -98,41 +210,41 @@ class {$moduleName}ServiceProvider extends ServiceProvider
 }";
     }
 
-    protected function getApiRoutesStub(string $moduleName): string
+    protected function getApiRoutesStub(string $moduleName, string $alias): string
     {
-        $lowerName = strtolower($moduleName);
         return "<?php
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1/{$lowerName}')->group(function () {
+Route::prefix('api/v1/{$alias}')->group(function () {
     // Add your API routes here
     // Example:
     // Route::get('/', [YourController::class, 'index']);
 });";
     }
 
-    protected function getWebRoutesStub(string $moduleName): string
+    protected function getWebRoutesStub(string $moduleName, string $alias): string
     {
-        $lowerName = strtolower($moduleName);
         return "<?php
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('{$lowerName}')->group(function () {
+Route::prefix('{$alias}')->group(function () {
     // Add your web routes here
     // Example:
     // Route::get('/', [YourController::class, 'index']);
 });";
     }
 
-    protected function getConfigStub(string $moduleName): string
+    protected function getConfigStub(string $moduleName, ?string $routeAlias = null): string
     {
+        $aliasLine = $routeAlias ? "\n    'route_alias' => '{$routeAlias}'," : '';
+        
         return "<?php
 
 return [
     'name' => '{$moduleName}',
-    'enabled' => true,
+    'enabled' => true,{$aliasLine}
     
     // Add your module configuration here
 ];";

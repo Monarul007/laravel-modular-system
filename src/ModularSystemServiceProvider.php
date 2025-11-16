@@ -17,6 +17,9 @@ class ModularSystemServiceProvider extends ServiceProvider
         // Register singletons
         $this->app->singleton(ModuleManager::class);
         $this->app->singleton(SettingsManager::class);
+        $this->app->singleton('module-view-helper', function () {
+            return new Core\ModuleViewHelper();
+        });
 
         // Register aliases
         $this->app->alias(ModuleManager::class, 'module-manager');
@@ -51,7 +54,15 @@ class ModularSystemServiceProvider extends ServiceProvider
                 Console\Commands\ModuleEnableCommand::class,
                 Console\Commands\ModuleDisableCommand::class,
                 Console\Commands\ModuleListCommand::class,
+                Console\Commands\ModuleRemoveCommand::class,
                 Console\Commands\TestModuleUploadCommand::class,
+                Console\Commands\MakeModuleControllerCommand::class,
+                Console\Commands\MakeModuleMiddlewareCommand::class,
+                Console\Commands\MakeModuleMigrationCommand::class,
+                Console\Commands\MakeModuleModelCommand::class,
+                Console\Commands\MakeModuleCommandCommand::class,
+                Console\Commands\ModulePublishCommand::class,
+                Console\Commands\ModuleSetAliasCommand::class,
             ]);
         }
 
@@ -64,6 +75,9 @@ class ModularSystemServiceProvider extends ServiceProvider
 
         // Load module routes
         $this->loadModuleRoutes($moduleManager);
+
+        // Load module views
+        $this->loadModuleViews($moduleManager);
 
         // Load package routes
         // Always load from package to ensure routes are available
@@ -105,6 +119,19 @@ class ModularSystemServiceProvider extends ServiceProvider
         
         if (File::exists($routePath)) {
             $this->loadRoutesFrom($routePath);
+        }
+    }
+
+    protected function loadModuleViews(ModuleManager $moduleManager): void
+    {
+        $modulesPath = config('modular-system.modules_path', base_path('modules'));
+        
+        foreach ($moduleManager->getEnabledModules() as $moduleName) {
+            $viewsPath = "{$modulesPath}/{$moduleName}/resources/views";
+            
+            if (File::exists($viewsPath)) {
+                $this->loadViewsFrom($viewsPath, strtolower($moduleName));
+            }
         }
     }
 }

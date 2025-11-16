@@ -25,6 +25,24 @@ class ModuleManager
             : $this->readEnabledModulesFile();
 
         $this->enabledModules = $enabledModules;
+        
+        // Clean up stale entries (modules that no longer exist)
+        $this->cleanupStaleModules();
+    }
+    
+    protected function cleanupStaleModules(): void
+    {
+        $originalCount = count($this->enabledModules);
+        $this->enabledModules = array_filter($this->enabledModules, function($moduleName) {
+            return $this->moduleExists($moduleName);
+        });
+        
+        // If any modules were removed, save the updated list
+        if (count($this->enabledModules) !== $originalCount) {
+            $this->enabledModules = array_values($this->enabledModules);
+            $this->saveEnabledModules();
+            $this->clearCache();
+        }
     }
 
     protected function readEnabledModulesFile(): array
