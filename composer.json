@@ -12,10 +12,15 @@
     ],
     "authors": [
         {
-            "name": "Your Name",
-            "email": "your.email@example.com"
+            "name": "Monarul Islam",
+            "email": "monarul007@gmail.com"
         }
     ],
+    "homepage": "https://github.com/monarul007/laravel-modular-system",
+    "support": {
+        "issues": "https://github.com/monarul007/laravel-modular-system/issues",
+        "source": "https://github.com/monarul007/laravel-modular-system"
+    },
     "require": {
         "php": "^8.2",
         "illuminate/support": "^11.0||^12.0",
