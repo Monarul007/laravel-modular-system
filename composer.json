@@ -1,0 +1,54 @@
+{
+    "name": "monarul007/laravel-modular-system",
+    "description": "WordPress-like modular system for Laravel with plug-and-play functionality",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "modules",
+        "plugins",
+        "modular",
+        "wordpress-like"
+    ],
+    "authors": [
+        {
+            "name": "Your Name",
+            "email": "your.email@example.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0||^12.0",
+        "illuminate/console": "^11.0||^12.0",
+        "illuminate/database": "^11.0||^12.0",
+        "illuminate/http": "^11.0||^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Monarul007\\LaravelModularSystem\\": "src/",
+            "Modules\\": "../../modules/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Monarul007\\LaravelModularSystem\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Monarul007\\LaravelModularSystem\\ModularSystemServiceProvider"
+            ],
+            "aliases": {
+                "ModuleManager": "Monarul007\\LaravelModularSystem\\Facades\\ModuleManager",
+                "Settings": "Monarul007\\LaravelModularSystem\\Facades\\Settings"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
