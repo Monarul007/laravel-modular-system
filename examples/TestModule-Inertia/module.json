@@ -1,0 +1,10 @@
+{
+    "name": "TestModule",
+    "version": "1.0.0",
+    "description": "Example module demonstrating Inertia.js integration",
+    "author": "Your Name",
+    "enabled": true,
+    "providers": [
+        "Modules\\TestModule\\Providers\\TestModuleServiceProvider"
+    ]
+}
