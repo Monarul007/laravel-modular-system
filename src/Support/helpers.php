@@ -32,8 +32,16 @@ if (!function_exists('module_view')) {
         $viewName = strtolower($moduleName) . '::' . $view;
         
         // If the view uses Inertia directives, ensure $page is available
-        if (!isset($data['page']) && app()->bound('inertia')) {
-            $data['page'] = app('inertia')->getShared();
+        if (!isset($data['page'])) {
+            try {
+                // Try to get Inertia shared data
+                if (class_exists(\Inertia\Inertia::class)) {
+                    $data['page'] = \Inertia\Inertia::getShared();
+                }
+            } catch (\Exception $e) {
+                // If Inertia is not available, provide empty page data
+                $data['page'] = ['component' => '', 'props' => [], 'url' => request()->url(), 'version' => null];
+            }
         }
         
         return view($viewName, $data);

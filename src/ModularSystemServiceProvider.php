@@ -76,6 +76,7 @@ class ModularSystemServiceProvider extends ServiceProvider
                 Console\Commands\MakeModuleCommandCommand::class,
                 Console\Commands\ModulePublishCommand::class,
                 Console\Commands\ModuleSetAliasCommand::class,
+                Console\Commands\ModulePublishAssetsCommand::class,
             ]);
         }
 
