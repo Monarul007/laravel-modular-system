@@ -20,18 +20,24 @@ class ModularSystemServiceProvider extends ServiceProvider
         $this->app->singleton('module-view-helper', function () {
             return new Core\ModuleViewHelper();
         });
+<<<<<<< HEAD
         $this->app->singleton('module-inertia-helper', function () {
             return new Core\InertiaHelper();
         });
+=======
+>>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
 
         // Register aliases
         $this->app->alias(ModuleManager::class, 'module-manager');
         $this->app->alias(SettingsManager::class, 'settings-manager');
+<<<<<<< HEAD
         
         // Load helper functions
         if (file_exists(__DIR__.'/Support/helpers.php')) {
             require_once __DIR__.'/Support/helpers.php';
         }
+=======
+>>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
     }
 
     public function boot(): void
@@ -52,11 +58,14 @@ class ModularSystemServiceProvider extends ServiceProvider
             __DIR__.'/../routes/web.php' => base_path('routes/modular-web.php'),
         ], 'modular-routes');
 
+<<<<<<< HEAD
         // Publish Vue components
         $this->publishes([
             __DIR__.'/../resources/js/Pages' => resource_path('js/Pages'),
         ], 'modular-views');
 
+=======
+>>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
@@ -76,7 +85,10 @@ class ModularSystemServiceProvider extends ServiceProvider
                 Console\Commands\MakeModuleCommandCommand::class,
                 Console\Commands\ModulePublishCommand::class,
                 Console\Commands\ModuleSetAliasCommand::class,
+<<<<<<< HEAD
                 Console\Commands\ModulePublishAssetsCommand::class,
+=======
+>>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
             ]);
         }
 
