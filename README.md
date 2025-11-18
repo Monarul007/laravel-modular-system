@@ -682,7 +682,9 @@ See [VIEW-PUBLISHING.md](VIEW-PUBLISHING.md) for complete documentation.
 
 ## Inertia.js Integration
 
-Full Inertia.js support for building modern SPAs with your modules. See [INERTIA-GUIDE.md](INERTIA-GUIDE.md) for complete documentation.
+Full Inertia.js support for building modern SPAs with your modules.
+
+**Important:** If you're using Inertia, make sure flash messages are properly configured. See [INERTIA-SETUP.md](INERTIA-SETUP.md) for setup instructions.
 
 **Quick Start:**
 
@@ -694,7 +696,10 @@ return module_inertia('Blog', 'Posts/Index', ['posts' => $posts]);
 return module_view('blog', 'welcome', ['title' => 'Welcome']);
 ```
 
-See [INERTIA-QUICK-REFERENCE.md](INERTIA-QUICK-REFERENCE.md) for quick reference.
+**Documentation:**
+- [INERTIA-SETUP.md](INERTIA-SETUP.md) - Setup and troubleshooting
+- [INERTIA-GUIDE.md](INERTIA-GUIDE.md) - Complete integration guide
+- [INERTIA-QUICK-REFERENCE.md](INERTIA-QUICK-REFERENCE.md) - Quick reference
 
 ## Architecture
 

@@ -28,16 +28,23 @@ All notable changes to `laravel-modular-system` will be documented in this file.
   - Shows detected templating engine
   - Displays what will be published
   - Provides publishing recommendations
+- **Inertia Middleware**: HandleInertiaRequests middleware for flash message sharing
 - **Documentation**:
   - VIEW-PUBLISHING.md - Complete guide to smart view publishing
   - UPGRADE-GUIDE.md - Migration guide for existing users
+  - INERTIA-SETUP.md - Inertia setup and troubleshooting guide
   - Updated README.md with smart publishing information
+
+### Fixed
+- **Vue Flash Messages**: Added optional chaining to prevent "Cannot read properties of undefined" errors
+- **Inertia Flash Data**: Improved flash message handling in Vue components
 
 ### Enhanced
 - Service provider now uses smart detection for view publishing
 - Routes work seamlessly with Blade, Inertia+Vue, and Inertia+React
 - Publishing system supports multiple templating engines
 - Better organization of view files by engine type
+- Vue components now safely handle missing flash data
 
 ### Features
 - Automatic detection of Blade, Inertia+Vue, or Inertia+React
@@ -45,6 +52,7 @@ All notable changes to `laravel-modular-system` will be documented in this file.
 - Force publish specific view types when needed
 - Complete admin panel available in all three formats
 - Backward compatible with existing Inertia+Vue setups
+- Proper flash message handling for Inertia applications
 
 ## [1.3.0] - 2024-11-17
 

@@ -272,6 +272,26 @@ php artisan vendor:publish --tag=modular-views-blade --force
 php artisan vendor:publish --tag=modular-views-inertia --force
 ```
 
+### Inertia Flash Messages Error
+
+**Problem:** `Cannot read properties of undefined (reading 'success')`
+
+**Solution:** Configure Inertia middleware to share flash messages. See [INERTIA-SETUP.md](INERTIA-SETUP.md) for detailed instructions.
+
+Quick fix - add to your `app/Http/Middleware/HandleInertiaRequests.php`:
+
+```php
+public function share(Request $request): array
+{
+    return array_merge(parent::share($request), [
+        'flash' => [
+            'success' => fn () => $request->session()->get('success'),
+            'error' => fn () => $request->session()->get('error'),
+        ],
+    ]);
+}
+```
+
 ### Inertia Components Not Rendering
 
 Ensure you have Inertia properly configured:
@@ -286,6 +306,8 @@ npm install @inertiajs/vue3
 # For React
 npm install @inertiajs/react
 ```
+
+See [INERTIA-SETUP.md](INERTIA-SETUP.md) for complete setup guide.
 
 ## Best Practices
 
