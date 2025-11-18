@@ -26,15 +26,27 @@ composer require monarul007/laravel-modular-system
 
 ### 1. Publish Configuration & Assets
 
+The package now includes **smart template engine detection** that automatically publishes the appropriate view files (Blade, Inertia+Vue, or Inertia+React) based on your application setup.
+
 ```bash
-# Publish everything
+# Detect your templating engine
+php artisan modular:detect-engine
+
+# Publish everything (views will be auto-detected)
 php artisan vendor:publish --provider="Monarul007\LaravelModularSystem\ModularSystemServiceProvider"
 
 # Or publish individually
 php artisan vendor:publish --tag=modular-config
 php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
+php artisan vendor:publish --tag=modular-views  # Auto-detects and publishes appropriate views
+
+# Force specific view types
+php artisan vendor:publish --tag=modular-views-blade    # Blade templates only
+php artisan vendor:publish --tag=modular-views-inertia  # Inertia components only
 ```
+
+See [VIEW-PUBLISHING.md](VIEW-PUBLISHING.md) for detailed information about smart view publishing.
 
 ### 2. Run Migrations
 
@@ -643,6 +655,30 @@ php artisan module:set-alias Blog blog-posts --force
 ## Testing & Examples
 
 For comprehensive testing workflows and real-world examples, see [TESTING-EXAMPLES.md](TESTING-EXAMPLES.md).
+
+## Smart View Publishing
+
+The package automatically detects your application's templating engine and publishes the appropriate view files:
+
+- **Blade Templates** - Traditional Laravel views with Tailwind CSS
+- **Inertia.js + Vue** - Vue 3 components with Composition API
+- **Inertia.js + React** - React components with Hooks
+
+```bash
+# Detect your setup
+php artisan modular:detect-engine
+
+# Publish appropriate views automatically
+php artisan vendor:publish --tag=modular-views
+```
+
+**Available Views:**
+- Admin Dashboard
+- Module Management (upload, enable, disable, uninstall)
+- Settings Management
+- Responsive layouts with Tailwind CSS
+
+See [VIEW-PUBLISHING.md](VIEW-PUBLISHING.md) for complete documentation.
 
 ## Inertia.js Integration
 

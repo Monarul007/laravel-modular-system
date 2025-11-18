@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\File;
 use Monarul007\LaravelModularSystem\Core\ModuleManager;
 use Monarul007\LaravelModularSystem\Core\SettingsManager;
+use Monarul007\LaravelModularSystem\Support\TemplateEngineDetector;
 
 class ModularSystemServiceProvider extends ServiceProvider
 {
@@ -52,10 +53,17 @@ class ModularSystemServiceProvider extends ServiceProvider
             __DIR__.'/../routes/web.php' => base_path('routes/modular-web.php'),
         ], 'modular-routes');
 
-        // Publish Vue components
+        // Smart view publishing based on detected templating engine
+        $this->publishViews();
+
+        // Publish all view types individually for manual selection
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/modular-system'),
+        ], 'modular-views-blade');
+
         $this->publishes([
             __DIR__.'/../resources/js/Pages' => resource_path('js/Pages'),
-        ], 'modular-views');
+        ], 'modular-views-inertia');
 
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
@@ -77,6 +85,7 @@ class ModularSystemServiceProvider extends ServiceProvider
                 Console\Commands\ModulePublishCommand::class,
                 Console\Commands\ModuleSetAliasCommand::class,
                 Console\Commands\ModulePublishAssetsCommand::class,
+                Console\Commands\DetectTemplateEngineCommand::class,
             ]);
         }
 
@@ -146,6 +155,18 @@ class ModularSystemServiceProvider extends ServiceProvider
             if (File::exists($viewsPath)) {
                 $this->loadViewsFrom($viewsPath, strtolower($moduleName));
             }
+        }
+    }
+
+    /**
+     * Publish views based on detected templating engine
+     */
+    protected function publishViews(): void
+    {
+        $viewFiles = TemplateEngineDetector::getViewFilesToPublish();
+        
+        if (!empty($viewFiles)) {
+            $this->publishes($viewFiles, 'modular-views');
         }
     }
 }

@@ -2,6 +2,50 @@
 
 All notable changes to `laravel-modular-system` will be documented in this file.
 
+## [1.4.0] - 2024-11-18
+
+### Added
+- **Smart View Publishing**: Automatic template engine detection and appropriate view publishing
+  - `TemplateEngineDetector` class for detecting Blade, Inertia+Vue, or Inertia+React
+  - Automatic detection based on `composer.json` and `package.json`
+  - Smart publishing via `--tag=modular-views` (auto-detects appropriate views)
+  - Manual override options: `--tag=modular-views-blade` and `--tag=modular-views-inertia`
+- **Blade Template Support**: Complete admin panel with Blade views
+  - `resources/views/admin/layout.blade.php` - Main admin layout
+  - `resources/views/admin/dashboard.blade.php` - Dashboard page
+  - `resources/views/admin/modules/index.blade.php` - Module management
+  - `resources/views/admin/settings/index.blade.php` - Settings management
+  - Tailwind CSS styling with responsive design
+  - Modal dialogs and form handling
+- **React Component Support**: Inertia.js with React/JSX components
+  - `resources/js/Pages/Admin/Layout.jsx` - React admin layout
+  - `resources/js/Pages/Admin/Dashboard.jsx` - Dashboard component
+  - `resources/js/Pages/Admin/Modules/Index.jsx` - Module management
+  - `resources/js/Pages/Admin/Settings/Index.jsx` - Settings management
+  - React Hooks integration (useState, useForm)
+  - Inertia React adapter support
+- **Detection Command**: New `modular:detect-engine` command
+  - Shows detected templating engine
+  - Displays what will be published
+  - Provides publishing recommendations
+- **Documentation**:
+  - VIEW-PUBLISHING.md - Complete guide to smart view publishing
+  - UPGRADE-GUIDE.md - Migration guide for existing users
+  - Updated README.md with smart publishing information
+
+### Enhanced
+- Service provider now uses smart detection for view publishing
+- Routes work seamlessly with Blade, Inertia+Vue, and Inertia+React
+- Publishing system supports multiple templating engines
+- Better organization of view files by engine type
+
+### Features
+- Automatic detection of Blade, Inertia+Vue, or Inertia+React
+- Publish only the views you need based on your stack
+- Force publish specific view types when needed
+- Complete admin panel available in all three formats
+- Backward compatible with existing Inertia+Vue setups
+
 ## [1.3.0] - 2024-11-17
 
 ### Added
