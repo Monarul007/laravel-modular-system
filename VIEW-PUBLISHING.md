@@ -66,8 +66,7 @@ admin/
 ├── dashboard.blade.php         # Dashboard page
 ├── modules/
 │   └── index.blade.php        # Module management
-└── settings/
-    └── index.blade.php        # Settings management
+
 ```
 
 **Features:**
@@ -87,8 +86,7 @@ Admin/
 ├── Dashboard.vue              # Dashboard page
 ├── Modules/
 │   └── Index.vue             # Module management
-└── Settings/
-    └── Index.vue             # Settings management
+
 ```
 
 **Features:**
@@ -107,8 +105,7 @@ Admin/
 ├── Dashboard.jsx              # Dashboard page
 ├── Modules/
 │   └── Index.jsx             # Module management
-└── Settings/
-    └── Index.jsx             # Settings management
+
 ```
 
 **Features:**
@@ -218,7 +215,6 @@ The package routes work with both Blade and Inertia:
 Route::middleware(['web', 'auth'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard']);
     Route::get('/modules', [AdminModuleController::class, 'index']);
-    Route::get('/settings', [AdminSettingsController::class, 'index']);
 });
 ```
 

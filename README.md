@@ -7,7 +7,7 @@ A Laravel package that provides **WordPress-like plug-and-play functionality** f
 - 🔌 **Module Upload**: Drag-and-drop ZIP files to install modules
 - ⚡ **Hot-swappable**: Enable/disable modules without restart
 - 🎛️ **Admin Panel**: Vue.js interface for module management
-- 🔧 **Settings Manager**: Dynamic configuration system
+
 - 📡 **API-First**: RESTful endpoints for SPA frontends
 - 🛠️ **CLI Tools**: Artisan commands for developers
 - 🗑️ **Module Removal**: Safely uninstall modules with confirmation
@@ -157,11 +157,7 @@ POST   /api/v1/admin/modules/disable      # Disable module
 POST   /api/v1/admin/modules/uninstall    # Uninstall module
 GET    /api/v1/admin/modules/download/{name}  # Download module
 
-# Settings Management
-GET    /api/v1/admin/settings/{group}    # Get settings group
-POST   /api/v1/admin/settings/{group}    # Update settings
-GET    /api/v1/admin/setting/{key}       # Get single setting
-POST   /api/v1/admin/setting              # Set single setting
+
 ```
 
 For detailed API documentation with request/response examples, see [API.md](API.md).
@@ -177,7 +173,6 @@ http://your-app.test/admin/modules
 
 ```php
 use Monarul007\LaravelModularSystem\Facades\ModuleManager;
-use Monarul007\LaravelModularSystem\Facades\Settings;
 use Monarul007\LaravelModularSystem\Facades\ModuleView;
 
 // Module Management
@@ -185,11 +180,6 @@ $modules = ModuleManager::getAllModules();
 ModuleManager::enableModule('YourModule');
 ModuleManager::disableModule('YourModule');
 ModuleManager::uninstallModule('YourModule');
-
-// Settings Management
-Settings::set('key', 'value', 'group');
-$value = Settings::get('key', 'default');
-$groupSettings = Settings::getGroup('general');
 
 // View & Asset Management
 $viewPath = ModuleView::view('Blog', 'index'); // Returns: 'blog::index'
@@ -224,7 +214,7 @@ modules/YourModule/
 ├── resources/
 │   ├── views/                       # Blade templates
 │   └── js/                          # Frontend assets
-├── config/YourModule.php            # Module settings
+├── config/YourModule.php            # Module configuration
 └── README.md                        # Module documentation
 ```
 
@@ -300,7 +290,7 @@ By default, modules are stored in `base_path('modules')`. Change this in config:
 'modules_path' => base_path('custom-modules'),
 ```
 
-### Cache Settings
+### Cache Configuration
 
 ```php
 'cache_enabled' => true,
@@ -473,20 +463,6 @@ php artisan module:set-alias Blog articles --force
 
 ## Advanced Features
 
-### Using Settings
-
-```php
-use Monarul007\LaravelModularSystem\Facades\Settings;
-
-// Set module settings
-Settings::set('blog.posts_per_page', 15, 'blog');
-Settings::set('blog.show_excerpt', true, 'blog');
-
-// Get settings
-$postsPerPage = Settings::get('blog.posts_per_page', 10);
-$blogSettings = Settings::getGroup('blog');
-```
-
 ### View Helpers
 
 ```php
@@ -577,16 +553,6 @@ ModuleManager::isModuleEnabled($name)       // Check if enabled
 ModuleManager::getModuleConfig($name)       // Get module config
 ```
 
-### Settings Facade
-
-```php
-Settings::get($key, $default)               // Get setting
-Settings::set($key, $value, $group)         // Set setting
-Settings::getGroup($group)                  // Get all settings in group
-Settings::has($key)                         // Check if setting exists
-Settings::forget($key)                      // Delete setting
-```
-
 ### ModuleView Facade
 
 ```php
@@ -675,7 +641,6 @@ php artisan vendor:publish --tag=modular-views
 **Available Views:**
 - Admin Dashboard
 - Module Management (upload, enable, disable, uninstall)
-- Settings Management
 - Responsive layouts with Tailwind CSS
 
 See [VIEW-PUBLISHING.md](VIEW-PUBLISHING.md) for complete documentation.

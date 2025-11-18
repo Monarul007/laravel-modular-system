@@ -28,10 +28,6 @@
                                class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.modules.*') ? 'border-indigo-500' : 'border-transparent' }} text-sm font-medium">
                                 Modules
                             </a>
-                            <a href="{{ route('admin.settings.index') }}" 
-                               class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.settings.*') ? 'border-indigo-500' : 'border-transparent' }} text-sm font-medium">
-                                Settings
-                            </a>
                         </div>
                     </div>
                 </div>

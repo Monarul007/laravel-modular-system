@@ -1,12 +1,11 @@
 # Admin Panel Setup Guide
 
-The Laravel Modular System includes a complete admin panel built with Inertia.js and Vue 3 for managing modules and settings.
+The Laravel Modular System includes a complete admin panel built with Inertia.js and Vue 3 for managing modules.
 
 ## Features
 
 - **Dashboard**: Overview of modules with statistics
 - **Module Management**: Enable, disable, upload, download, and uninstall modules
-- **Settings Management**: Configure system settings by groups
 - **Authentication**: Protected routes requiring authentication
 
 ## Installation
@@ -96,8 +95,6 @@ POST /admin/modules/disable      - Disable module
 POST /admin/modules/upload       - Upload module ZIP
 POST /admin/modules/uninstall    - Uninstall module
 GET  /admin/modules/download/{name} - Download module
-GET  /admin/settings             - Settings page
-POST /admin/settings/{group}     - Update settings
 ```
 
 ## Usage
@@ -131,13 +128,6 @@ POST /admin/settings/{group}     - Update settings
 2. Click "Uninstall" next to the module
 3. Confirm the action
 
-### Managing Settings
-
-1. Go to `/admin/settings`
-2. Select a settings group (General, OTP, System)
-3. Modify settings as needed
-4. Click "Save Settings"
-
 ## Customization
 
 ### Customize Routes
@@ -156,7 +146,6 @@ The Vue components are published to `resources/js/Pages/Admin/`. You can modify 
 
 - `Admin/Dashboard.vue` - Dashboard page
 - `Admin/Modules/Index.vue` - Module management
-- `Admin/Settings/Index.vue` - Settings management
 - `Admin/Layout.vue` - Admin layout wrapper
 
 ### Add Custom Middleware
@@ -243,13 +232,6 @@ php artisan route:list | grep admin
    ```
 2. Ensure `storage/app/temp_modules` is writable
 3. Check ZIP file structure includes `module.json`
-
-### Issue: Settings Not Saving
-
-**Solution:**
-1. Ensure migrations are run: `php artisan migrate`
-2. Check `settings` table exists
-3. Verify database connection
 
 ## Security
 

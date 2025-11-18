@@ -14,14 +14,14 @@ All notable changes to `laravel-modular-system` will be documented in this file.
   - `resources/views/admin/layout.blade.php` - Main admin layout
   - `resources/views/admin/dashboard.blade.php` - Dashboard page
   - `resources/views/admin/modules/index.blade.php` - Module management
-  - `resources/views/admin/settings/index.blade.php` - Settings management
+
   - Tailwind CSS styling with responsive design
   - Modal dialogs and form handling
 - **React Component Support**: Inertia.js with React/JSX components
   - `resources/js/Pages/Admin/Layout.jsx` - React admin layout
   - `resources/js/Pages/Admin/Dashboard.jsx` - Dashboard component
   - `resources/js/Pages/Admin/Modules/Index.jsx` - Module management
-  - `resources/js/Pages/Admin/Settings/Index.jsx` - Settings management
+
   - React Hooks integration (useState, useForm)
   - Inertia React adapter support
 - **Detection Command**: New `modular:detect-engine` command
@@ -67,8 +67,8 @@ All notable changes to `laravel-modular-system` will be documented in this file.
 - **Admin Panel**: Complete admin interface with Inertia.js
   - `AdminController` - Dashboard with module statistics
   - `AdminModuleController` - Module management (enable, disable, upload, download, uninstall)
-  - `AdminSettingsController` - Settings management by groups
-  - Vue components for admin interface (Dashboard, Modules, Settings)
+
+  - Vue components for admin interface (Dashboard, Modules)
   - Admin routes with authentication middleware
 - **Documentation**: 
   - INERTIA-INTEGRATION.md - Complete Inertia integration guide
@@ -146,9 +146,9 @@ All notable changes to `laravel-modular-system` will be documented in this file.
 ### Added
 - Initial release
 - ModuleManager for dynamic module management
-- SettingsManager for configuration management
+
 - Console commands (make:module, module:enable, module:disable, module:list)
-- API endpoints for module and settings management
+- API endpoints for module management
 - ZIP upload/download functionality
 - Hot-swappable module system
 - Caching support for performance
@@ -161,7 +161,7 @@ All notable changes to `laravel-modular-system` will be documented in this file.
 - RESTful API endpoints
 - Artisan CLI commands
 - Configurable module paths
-- Settings grouped by category
+
 - Automatic service provider registration
 
 ### Security

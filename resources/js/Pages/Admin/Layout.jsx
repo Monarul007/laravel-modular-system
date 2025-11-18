@@ -40,16 +40,6 @@ export default function AdminLayout({ children }) {
                                 >
                                     Modules
                                 </Link>
-                                <Link
-                                    href="/admin/settings"
-                                    className={`inline-flex items-center px-1 pt-1 border-b-2 ${
-                                        isActive('/admin/settings')
-                                            ? 'border-indigo-500'
-                                            : 'border-transparent'
-                                    } text-sm font-medium`}
-                                >
-                                    Settings
-                                </Link>
                             </div>
                         </div>
                     </div>

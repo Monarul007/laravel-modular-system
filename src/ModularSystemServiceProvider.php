@@ -5,7 +5,6 @@ namespace Monarul007\LaravelModularSystem;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\File;
 use Monarul007\LaravelModularSystem\Core\ModuleManager;
-use Monarul007\LaravelModularSystem\Core\SettingsManager;
 use Monarul007\LaravelModularSystem\Support\TemplateEngineDetector;
 
 class ModularSystemServiceProvider extends ServiceProvider
@@ -17,7 +16,6 @@ class ModularSystemServiceProvider extends ServiceProvider
 
         // Register singletons
         $this->app->singleton(ModuleManager::class);
-        $this->app->singleton(SettingsManager::class);
         $this->app->singleton('module-view-helper', function () {
             return new Core\ModuleViewHelper();
         });
@@ -27,7 +25,6 @@ class ModularSystemServiceProvider extends ServiceProvider
 
         // Register aliases
         $this->app->alias(ModuleManager::class, 'module-manager');
-        $this->app->alias(SettingsManager::class, 'settings-manager');
         
         // Load helper functions
         if (file_exists(__DIR__.'/Support/helpers.php')) {

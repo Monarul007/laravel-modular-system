@@ -16,7 +16,7 @@ return [
     | Cache Configuration
     |--------------------------------------------------------------------------
     |
-    | Enable caching for module configurations and settings.
+    | Enable caching for module configurations.
     |
     */
     'cache_enabled' => true,

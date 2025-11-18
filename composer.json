@@ -49,8 +49,7 @@
                 "Monarul007\\LaravelModularSystem\\ModularSystemServiceProvider"
             ],
             "aliases": {
-                "ModuleManager": "Monarul007\\LaravelModularSystem\\Facades\\ModuleManager",
-                "Settings": "Monarul007\\LaravelModularSystem\\Facades\\Settings"
+                "ModuleManager": "Monarul007\\LaravelModularSystem\\Facades\\ModuleManager"
             }
         }
     },

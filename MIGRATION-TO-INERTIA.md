@@ -173,7 +173,7 @@ modules/YourModule/resources/js/Pages/
 │   ├── Index.vue
 │   ├── Show.vue
 │   └── Edit.vue
-└── Settings.vue
+
 ```
 
 **Example component:**

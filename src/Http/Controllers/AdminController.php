@@ -4,15 +4,13 @@ namespace Monarul007\LaravelModularSystem\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Monarul007\LaravelModularSystem\Core\ModuleManager;
-use Monarul007\LaravelModularSystem\Core\SettingsManager;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AdminController extends Controller
 {
     public function __construct(
-        protected ModuleManager $moduleManager,
-        protected SettingsManager $settings
+        protected ModuleManager $moduleManager
     ) {}
 
     public function dashboard(): Response

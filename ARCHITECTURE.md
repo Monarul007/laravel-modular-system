@@ -13,15 +13,14 @@
 │  │  ┌─────────────────────────────────────────────────┐  │  │
 │  │  │   ModularSystemServiceProvider                   │  │  │
 │  │  │   - Registers ModuleManager                      │  │  │
-│  │  │   - Registers SettingsManager                    │  │  │
 │  │  │   - Loads module routes                          │  │  │
 │  │  │   - Boots enabled modules                        │  │  │
 │  │  └─────────────────────────────────────────────────┘  │  │
 │  │                                                         │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │  │
-│  │  │ ModuleManager│  │SettingsManager│  │ApiResponse │  │  │
-│  │  │              │  │               │  │            │  │  │
-│  │  │ - Load       │  │ - Get/Set     │  │ - Success  │  │  │
+│  │  ┌──────────────┐  ┌────────────┐  │  │
+│  │  │ ModuleManager│  │ApiResponse │  │  │
+│  │  │              │  │            │  │  │
+│  │  │ - Load       │  │ - Success  │  │  │
 │  │  │ - Enable     │  │ - Groups      │  │ - Error    │  │  │
 │  │  │ - Disable    │  │ - Cache       │  │ - Paginate │  │  │
 │  │  │ - Install    │  │ - Types       │  │            │  │  │
@@ -39,13 +38,11 @@
 │  │  ┌─────────────────────────────────────────────────┐  │  │
 │  │  │           HTTP Controllers                       │  │  │
 │  │  │  - ModuleController (CRUD operations)            │  │  │
-│  │  │  - SettingsController (Settings management)      │  │  │
 │  │  └─────────────────────────────────────────────────┘  │  │
 │  │                                                         │  │
 │  │  ┌─────────────────────────────────────────────────┐  │  │
 │  │  │                 Facades                          │  │  │
 │  │  │  - ModuleManager::getAllModules()                │  │  │
-│  │  │  - Settings::get('key')                          │  │  │
 │  │  └─────────────────────────────────────────────────┘  │  │
 │  │                                                         │  │
 │  └─────────────────────────────────────────────────────┘  │
@@ -70,9 +67,6 @@
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │                    Database                            │  │
 │  │                                                         │  │
-│  │  settings                                              │  │
-│  │  ├── id                                                │  │
-│  │  ├── key (unique)                                      │  │
 │  │  ├── value                                             │  │
 │  │  ├── type (string|integer|boolean|array)              │  │
 │  │  ├── group (general|otp|system|...)                   │  │
@@ -137,14 +131,12 @@ Laravel Boot
                             └─→ Load routes/web.php
 ```
 
-### 3. Settings Flow
+### 3. Module Configuration Flow
 
 ```
-Settings::get('site_name')
+ModuleManager::getModuleConfig('Blog')
     │
-    └─→ SettingsManager::get('site_name')
-            │
-            ├─→ Check in-memory cache
+    └─→ Check in-memory cache
             │       │
             │       └─→ If found: return value
             │
@@ -188,14 +180,12 @@ User uploads ZIP file
 │   Facades    │
 │              │
 │ ModuleManager│◄─────┐
-│   Settings   │      │
 └──────────────┘      │
                       │
 ┌──────────────┐      │
 │  Controllers │      │
 │              │      │
 │   Module     │──────┤
-│   Settings   │      │
 └──────────────┘      │
                       │
 ┌──────────────┐      │
@@ -210,17 +200,10 @@ User uploads ZIP file
             │   Core Classes   │
             │                  │
             │  ModuleManager   │◄──────┐
-            │  SettingsManager │       │
             └──────────────────┘       │
                       │                │
                       │                │
                       ▼                │
-            ┌──────────────────┐       │
-            │    Database      │       │
-            │                  │       │
-            │  settings table  │       │
-            └──────────────────┘       │
-                                       │
             ┌──────────────────┐       │
             │   File System    │       │
             │                  │       │
@@ -250,24 +233,7 @@ modules/Blog/module.json
             └─→ GET /api/v1/admin/modules
 ```
 
-### Settings Data
 
-```
-Database (settings table)
-    │
-    ├─→ Read by SettingsManager
-    │       │
-    │       └─→ Cached in Laravel cache
-    │               │
-    │               └─→ Cached in memory
-    │                       │
-    │                       └─→ Returned to application
-    │
-    └─→ Updated via:
-            ├─→ Settings::set()
-            ├─→ POST /api/v1/admin/settings/{group}
-            └─→ POST /api/v1/admin/setting
-```
 
 ## Caching Strategy
 
@@ -278,16 +244,13 @@ Database (settings table)
 │                                                       │
 │  Layer 1: In-Memory (PHP Variables)                 │
 │  ├─→ ModuleManager::$enabledModules                 │
-│  ├─→ ModuleManager::$moduleConfigs                  │
-│  └─→ SettingsManager::$settings                     │
+│  └─→ ModuleManager::$moduleConfigs                  │
 │                                                       │
 │  Layer 2: Laravel Cache (Redis/Memcached/File)      │
-│  ├─→ 'modular_system.enabled_modules' (1 hour)      │
-│  ├─→ 'modular_system.setting.{key}' (1 hour)        │
-│  └─→ 'modular_system.settings.group.{group}' (1hr)  │
+│  └─→ 'modular_system.enabled_modules' (1 hour)      │
 │                                                       │
-│  Layer 3: Database                                   │
-│  └─→ settings table                                  │
+│  Layer 3: File System                                │
+│  └─→ modules/{name}/module.json                     │
 │                                                       │
 └─────────────────────────────────────────────────────┘
 
@@ -370,13 +333,11 @@ Cache Invalidation:
 
 1. **Caching**: Two-layer cache (memory + Laravel cache)
 2. **Lazy Loading**: Modules loaded only when enabled
-3. **Efficient Queries**: Settings grouped for batch retrieval
-4. **File Operations**: Minimal file system access
-5. **Route Loading**: Only enabled module routes loaded
+3. **File Operations**: Minimal file system access
+4. **Route Loading**: Only enabled module routes loaded
 
 ## Scalability
 
 - **Horizontal**: Multiple app instances share same modules directory
 - **Vertical**: Handles hundreds of modules efficiently
-- **Database**: Settings table indexed on key and group
 - **Cache**: Distributed cache (Redis) for multi-server setups
