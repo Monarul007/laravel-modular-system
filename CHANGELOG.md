@@ -2,7 +2,6 @@
 
 All notable changes to `laravel-modular-system` will be documented in this file.
 
-<<<<<<< HEAD
 ## [1.3.0] - 2024-11-17
 
 ### Added
@@ -37,8 +36,6 @@ All notable changes to `laravel-modular-system` will be documented in this file.
 - Publishable Vue components for admin panel
 - Routes automatically loaded via service provider
 
-=======
->>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
 ## [1.2.0] - 2024-11-16
 
 ### Added

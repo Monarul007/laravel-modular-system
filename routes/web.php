@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
 use Monarul007\LaravelModularSystem\Http\Controllers\AdminController;
 use Monarul007\LaravelModularSystem\Http\Controllers\AdminModuleController;
 use Monarul007\LaravelModularSystem\Http\Controllers\AdminSettingsController;
@@ -26,8 +25,6 @@ Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(funct
         Route::post('/{group}', [AdminSettingsController::class, 'update'])->name('update');
     });
 });
-=======
 
 // Web routes can be added here if needed
 // These routes are optional and can be customized by the user
->>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084

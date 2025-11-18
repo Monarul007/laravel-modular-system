@@ -14,10 +14,7 @@ A Laravel package that provides **WordPress-like plug-and-play functionality** f
 - 🎨 **View Resolution**: Automatic view namespace registration for modules
 - 🏗️ **Component Generators**: Create controllers, models, migrations, and more
 - 📦 **Asset Management**: Publish and manage module-specific assets
-<<<<<<< HEAD
 - ⚛️ **Inertia.js Support**: Full compatibility with Inertia.js for modern SPAs
-=======
->>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
 
 ## Installation
 
@@ -647,7 +644,6 @@ php artisan module:set-alias Blog blog-posts --force
 
 For comprehensive testing workflows and real-world examples, see [TESTING-EXAMPLES.md](TESTING-EXAMPLES.md).
 
-<<<<<<< HEAD
 ## Inertia.js Integration
 
 Full Inertia.js support for building modern SPAs with your modules. See [INERTIA-GUIDE.md](INERTIA-GUIDE.md) for complete documentation.
@@ -664,8 +660,6 @@ return module_view('blog', 'welcome', ['title' => 'Welcome']);
 
 See [INERTIA-QUICK-REFERENCE.md](INERTIA-QUICK-REFERENCE.md) for quick reference.
 
-=======
->>>>>>> 7135bd4baa80123da48c1b13925a5a46c2b7c084
 ## Architecture
 
 For detailed system architecture, component interactions, and technical implementation details, see [ARCHITECTURE.md](ARCHITECTURE.md).
