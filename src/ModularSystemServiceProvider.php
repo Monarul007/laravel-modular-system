@@ -39,11 +39,6 @@ class ModularSystemServiceProvider extends ServiceProvider
             __DIR__.'/../config/modular-system.php' => config_path('modular-system.php'),
         ], 'modular-config');
 
-        // Publish migrations
-        $this->publishes([
-            __DIR__.'/../database/migrations/' => database_path('migrations'),
-        ], 'modular-migrations');
-
         // Publish routes
         $this->publishes([
             __DIR__.'/../routes/api.php' => base_path('routes/modular-api.php'),
@@ -61,9 +56,6 @@ class ModularSystemServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/js/Pages' => resource_path('js/Pages'),
         ], 'modular-views-inertia');
-
-        // Load migrations
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         // Register commands
         if ($this->app->runningInConsole()) {

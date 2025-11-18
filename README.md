@@ -37,7 +37,6 @@ php artisan vendor:publish --provider="Monarul007\LaravelModularSystem\ModularSy
 
 # Or publish individually
 php artisan vendor:publish --tag=modular-config
-php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
 php artisan vendor:publish --tag=modular-views  # Auto-detects and publishes appropriate views
 
@@ -48,13 +47,7 @@ php artisan vendor:publish --tag=modular-views-inertia  # Inertia components onl
 
 See [VIEW-PUBLISHING.md](VIEW-PUBLISHING.md) for detailed information about smart view publishing.
 
-### 2. Run Migrations
-
-```bash
-php artisan migrate
-```
-
-### 3. Configure (Optional)
+### 2. Configure (Optional)
 
 Edit `config/modular-system.php`:
 
@@ -326,7 +319,6 @@ php artisan module:make-middleware Blog CheckPostOwnership
 
 # 3. Enable and setup
 php artisan module:enable Blog
-php artisan migrate
 php artisan module:publish Blog
 ```
 

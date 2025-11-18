@@ -339,14 +339,10 @@ php artisan modular:detect-engine
 
 # 3. Publish everything
 php artisan vendor:publish --tag=modular-config
-php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
 php artisan vendor:publish --tag=modular-views
 
-# 4. Run migrations
-php artisan migrate
-
-# 5. Access admin panel
+# 4. Access admin panel
 # Visit: http://your-app.test/admin
 ```
 
@@ -361,17 +357,13 @@ php artisan modular:detect-engine
 
 # 3. Publish everything
 php artisan vendor:publish --tag=modular-config
-php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
 php artisan vendor:publish --tag=modular-views
 
-# 4. Run migrations
-php artisan migrate
-
-# 5. Build assets
+# 4. Build assets
 npm run dev
 
-# 6. Access admin panel
+# 5. Access admin panel
 # Visit: http://your-app.test/admin
 ```
 
@@ -386,17 +378,13 @@ php artisan modular:detect-engine
 
 # 3. Publish everything
 php artisan vendor:publish --tag=modular-config
-php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
 php artisan vendor:publish --tag=modular-views
 
-# 4. Run migrations
-php artisan migrate
-
-# 5. Build assets
+# 4. Build assets
 npm run dev
 
-# 6. Access admin panel
+# 5. Access admin panel
 # Visit: http://your-app.test/admin
 ```
 

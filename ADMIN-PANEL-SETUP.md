@@ -18,7 +18,6 @@ php artisan vendor:publish --provider="Monarul007\LaravelModularSystem\ModularSy
 
 # Or publish individually
 php artisan vendor:publish --tag=modular-config
-php artisan vendor:publish --tag=modular-migrations
 php artisan vendor:publish --tag=modular-routes
 php artisan vendor:publish --tag=modular-views
 ```
@@ -80,7 +79,6 @@ The admin routes require authentication. Make sure you have Laravel's authentica
 composer require laravel/breeze --dev
 php artisan breeze:install vue
 npm install && npm run build
-php artisan migrate
 ```
 
 ## Routes
