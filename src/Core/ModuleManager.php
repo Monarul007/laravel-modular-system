@@ -29,6 +29,38 @@ class ModuleManager
         // Clean up stale entries (modules that no longer exist)
         $this->cleanupStaleModules();
     }
+
+    public function checkDependencies(string $moduleName): array
+    {
+        $config = $this->getModuleConfig($moduleName);
+        $missingDependencies = [];
+
+        if ($config && isset($config['dependencies']) && is_array($config['dependencies'])) {
+            foreach ($config['dependencies'] as $dependency) {
+                if (!$this->isModuleEnabled($dependency)) {
+                    $missingDependencies[] = $dependency;
+                }
+            }
+        }
+
+        return $missingDependencies;
+    }
+
+    public function getDependentModules(string $moduleName): array
+    {
+        $dependentModules = [];
+        $enabledModules = $this->getEnabledModules();
+
+        foreach ($enabledModules as $enabledModule) {
+            if ($enabledModule === $moduleName) continue;
+
+            $config = $this->getModuleConfig($enabledModule);
+            if ($config && isset($config['dependencies']) && is_array($config['dependencies']) && in_array($moduleName, $config['dependencies'])) {
+                $dependentModules[] = $enabledModule;
+            }
+        }
+
+        return $dependentModules;    }
     
     protected function cleanupStaleModules(): void
     {
@@ -75,6 +107,12 @@ class ModuleManager
             return false;
         }
 
+        // Check dependencies
+        $missingDependencies = $this->checkDependencies($moduleName);
+        if (!empty($missingDependencies)) {
+            throw new \Exception("Cannot enable module '{$moduleName}'. Missing dependencies: " . implode(', ', $missingDependencies));
+        }
+
         if (!in_array($moduleName, $this->enabledModules)) {
             $this->enabledModules[] = $moduleName;
             $this->saveEnabledModules();
@@ -86,6 +124,12 @@ class ModuleManager
 
     public function disableModule(string $moduleName): bool
     {
+        // Check dependents
+        $dependents = $this->getDependentModules($moduleName);
+        if (!empty($dependents)) {
+            throw new \Exception("Cannot disable module '{$moduleName}'. Required by: " . implode(', ', $dependents));
+        }
+
         $key = array_search($moduleName, $this->enabledModules);
 
         if ($key !== false) {
@@ -119,6 +163,18 @@ class ModuleManager
     }
 
     public function getAllModules(): array
+    {
+        $cacheKey = 'modular_system.all_modules';
+        $cacheTtl = config('modular-system.cache_ttl', 3600);
+
+        if (config('modular-system.cache_enabled', true)) {
+            return Cache::remember($cacheKey, $cacheTtl, fn() => $this->scanForModules());
+        }
+
+        return $this->scanForModules();
+    }
+
+    protected function scanForModules(): array
     {
         $modulesPath = config('modular-system.modules_path', base_path('modules'));
 
@@ -165,6 +221,7 @@ class ModuleManager
     {
         if (config('modular-system.cache_enabled', true)) {
             Cache::forget('modular_system.enabled_modules');
+            Cache::forget('modular_system.all_modules');
         }
     }
 
@@ -192,6 +249,10 @@ class ModuleManager
 
     public function installModuleFromZip(string $zipPath, string $moduleName = null): array
     {
+        if (!config('modular-system.security.upload_enabled', true)) {
+            return ['success' => false, 'message' => 'Module uploads are disabled via configuration'];
+        }
+
         $zip = new \ZipArchive();
 
         if ($zip->open($zipPath) !== TRUE) {
@@ -216,9 +277,9 @@ class ModuleManager
 
         $moduleConfig = json_decode(File::get($moduleJsonPath), true);
 
-        if (!$moduleConfig || !isset($moduleConfig['name'])) {
+        if (!$this->validateModuleConfig($moduleConfig)) {
             File::deleteDirectory($tempDir);
-            return ['success' => false, 'message' => 'Invalid module.json format'];
+            return ['success' => false, 'message' => 'Invalid module.json format. Required fields: name, version, namespace, providers'];
         }
 
         $detectedModuleName = $moduleConfig['name'];
@@ -322,5 +383,16 @@ class ModuleManager
         $zip->close();
 
         return $zipPath;
+    }
+    protected function validateModuleConfig(?array $config): bool
+    {
+        if (!$config) return false;
+
+        $required = ['name', 'version', 'namespace', 'providers'];
+        foreach ($required as $field) {
+            if (!isset($config[$field])) return false;
+        }
+
+        return true;
     }
 }

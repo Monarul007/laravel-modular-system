@@ -31,7 +31,21 @@ return [
     |
     */
     'upload_max_size' => 2048, // KB
+    'upload_max_size' => 2048, // KB
     'allowed_extensions' => ['zip'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Security Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Security settings for module management.
+    |
+    */
+    'security' => [
+        'upload_enabled' => true,
+        'admin_middleware' => ['web', 'auth'],
+    ],
 
     /*
     |--------------------------------------------------------------------------

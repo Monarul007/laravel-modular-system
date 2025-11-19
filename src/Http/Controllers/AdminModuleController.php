@@ -36,8 +36,12 @@ class AdminModuleController extends Controller
             return back()->withErrors(['name' => "Module '{$moduleName}' does not exist"]);
         }
 
-        if ($this->moduleManager->enableModule($moduleName)) {
-            return back()->with('success', "Module '{$moduleName}' enabled successfully");
+        try {
+            if ($this->moduleManager->enableModule($moduleName)) {
+                return back()->with('success', "Module '{$moduleName}' enabled successfully");
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['name' => $e->getMessage()]);
         }
 
         return back()->withErrors(['name' => "Failed to enable module '{$moduleName}'"]);
@@ -55,8 +59,12 @@ class AdminModuleController extends Controller
             return back()->withErrors(['name' => "Module '{$moduleName}' does not exist"]);
         }
 
-        if ($this->moduleManager->disableModule($moduleName)) {
-            return back()->with('success', "Module '{$moduleName}' disabled successfully");
+        try {
+            if ($this->moduleManager->disableModule($moduleName)) {
+                return back()->with('success', "Module '{$moduleName}' disabled successfully");
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['name' => $e->getMessage()]);
         }
 
         return back()->withErrors(['name' => "Failed to disable module '{$moduleName}'"]);
