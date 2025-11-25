@@ -16,6 +16,7 @@ class ModularSystemServiceProvider extends ServiceProvider
 
         // Register singletons
         $this->app->singleton(ModuleManager::class);
+        $this->app->singleton(Core\FeatureRegistry::class);
         $this->app->singleton('module-view-helper', function () {
             return new Core\ModuleViewHelper();
         });
@@ -25,6 +26,7 @@ class ModularSystemServiceProvider extends ServiceProvider
 
         // Register aliases
         $this->app->alias(ModuleManager::class, 'module-manager');
+        $this->app->alias(Core\FeatureRegistry::class, 'feature-registry');
         
         // Load helper functions
         if (file_exists(__DIR__.'/Support/helpers.php')) {

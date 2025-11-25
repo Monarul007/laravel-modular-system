@@ -4,15 +4,25 @@ namespace Monarul007\LaravelModularSystem\Core;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
+use Monarul007\LaravelModularSystem\Events\ModuleEnabled;
+use Monarul007\LaravelModularSystem\Events\ModuleEnabling;
+use Monarul007\LaravelModularSystem\Events\ModuleDisabled;
+use Monarul007\LaravelModularSystem\Events\ModuleDisabling;
+use Monarul007\LaravelModularSystem\Events\ModuleInstalling;
+use Monarul007\LaravelModularSystem\Events\ModuleInstalled;
+use Monarul007\LaravelModularSystem\Events\ModuleUninstalling;
+use Monarul007\LaravelModularSystem\Events\ModuleUninstalled;
 
 class ModuleManager
 {
     protected array $enabledModules = [];
     protected array $moduleConfigs = [];
+    protected ?DependencyResolver $dependencyResolver = null;
 
     public function __construct()
     {
         $this->loadEnabledModules();
+        $this->dependencyResolver = new DependencyResolver($this);
     }
 
     public function loadEnabledModules(): void
@@ -32,35 +42,18 @@ class ModuleManager
 
     public function checkDependencies(string $moduleName): array
     {
-        $config = $this->getModuleConfig($moduleName);
-        $missingDependencies = [];
-
-        if ($config && isset($config['dependencies']) && is_array($config['dependencies'])) {
-            foreach ($config['dependencies'] as $dependency) {
-                if (!$this->isModuleEnabled($dependency)) {
-                    $missingDependencies[] = $dependency;
-                }
-            }
-        }
-
-        return $missingDependencies;
+        return $this->dependencyResolver->checkDependencies($moduleName);
     }
 
     public function getDependentModules(string $moduleName): array
     {
-        $dependentModules = [];
-        $enabledModules = $this->getEnabledModules();
+        return $this->dependencyResolver->getDependentModules($moduleName);
+    }
 
-        foreach ($enabledModules as $enabledModule) {
-            if ($enabledModule === $moduleName) continue;
-
-            $config = $this->getModuleConfig($enabledModule);
-            if ($config && isset($config['dependencies']) && is_array($config['dependencies']) && in_array($moduleName, $config['dependencies'])) {
-                $dependentModules[] = $enabledModule;
-            }
-        }
-
-        return $dependentModules;    }
+    public function detectCircularDependencies(string $moduleName): ?array
+    {
+        return $this->dependencyResolver->detectCircularDependencies($moduleName);
+    }
     
     protected function cleanupStaleModules(): void
     {
@@ -107,16 +100,26 @@ class ModuleManager
             return false;
         }
 
-        // Check dependencies
+        $circular = $this->detectCircularDependencies($moduleName);
+        if ($circular) {
+            throw new \Exception("Cannot enable module '{$moduleName}'. Circular dependency detected: " . implode(' -> ', $circular));
+        }
+
         $missingDependencies = $this->checkDependencies($moduleName);
         if (!empty($missingDependencies)) {
             throw new \Exception("Cannot enable module '{$moduleName}'. Missing dependencies: " . implode(', ', $missingDependencies));
         }
 
         if (!in_array($moduleName, $this->enabledModules)) {
+            $config = $this->getModuleConfig($moduleName);
+            
+            event(new ModuleEnabling($moduleName, $config));
+            
             $this->enabledModules[] = $moduleName;
             $this->saveEnabledModules();
             $this->clearCache();
+            
+            event(new ModuleEnabled($moduleName, $config));
         }
 
         return true;
@@ -133,10 +136,16 @@ class ModuleManager
         $key = array_search($moduleName, $this->enabledModules);
 
         if ($key !== false) {
+            $config = $this->getModuleConfig($moduleName);
+            
+            event(new ModuleDisabling($moduleName, $config));
+            
             unset($this->enabledModules[$key]);
             $this->enabledModules = array_values($this->enabledModules);
             $this->saveEnabledModules();
             $this->clearCache();
+            
+            event(new ModuleDisabled($moduleName, $config));
         }
 
         return true;
@@ -290,6 +299,8 @@ class ModuleManager
             return ['success' => false, 'message' => "Module '{$finalModuleName}' already exists"];
         }
 
+        event(new ModuleInstalling($finalModuleName, $zipPath, $moduleConfig));
+
         $modulesPath = config('modular-system.modules_path', base_path('modules'));
         $moduleDir = "{$modulesPath}/{$finalModuleName}";
         $extractedModuleDir = dirname($moduleJsonPath);
@@ -312,6 +323,8 @@ class ModuleManager
             $moduleConfig['name'] = $finalModuleName;
             File::put("{$moduleDir}/module.json", json_encode($moduleConfig, JSON_PRETTY_PRINT));
         }
+
+        event(new ModuleInstalled($finalModuleName, $moduleConfig));
 
         return [
             'success' => true,
@@ -341,12 +354,22 @@ class ModuleManager
             return false;
         }
 
+        $config = $this->getModuleConfig($moduleName);
+        
+        event(new ModuleUninstalling($moduleName, $config));
+
         $this->disableModule($moduleName);
 
         $modulesPath = config('modular-system.modules_path', base_path('modules'));
         $moduleDir = "{$modulesPath}/{$moduleName}";
 
-        return File::deleteDirectory($moduleDir);
+        $result = File::deleteDirectory($moduleDir);
+        
+        if ($result) {
+            event(new ModuleUninstalled($moduleName, $config));
+        }
+
+        return $result;
     }
 
     public function createModuleZip(string $moduleName): ?string
