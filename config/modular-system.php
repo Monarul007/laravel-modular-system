@@ -57,6 +57,16 @@ return [
     */
     'enabled_modules_file' => 'enabled.json',
     'module_config_file' => 'module.json',
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Database Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Database table prefix for module-related tables.
+    |
+    */
+    'database_prefix' => 'module_',
 
     /*
     |--------------------------------------------------------------------------

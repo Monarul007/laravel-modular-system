@@ -195,7 +195,7 @@ class {$moduleName}ServiceProvider extends ServiceProvider
     {
         \$this->mergeConfigFrom(
             __DIR__ . '/../config/{$moduleName}.php',
-            '{$moduleName}'
+            strtolower('{$moduleName}')
         );
     }
 

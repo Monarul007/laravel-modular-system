@@ -18,6 +18,17 @@ if (!function_exists('module_inertia')) {
     }
 }
 
+if (!function_exists('module_db_prefix')) {
+    /**
+     * Get the database table prefix for modules
+     */
+    function module_db_prefix(string $table = ''): string
+    {
+        $prefix = config('modular-system.database_prefix', 'module_');
+        return $prefix . $table;
+    }
+}
+
 if (!function_exists('module_view')) {
     /**
      * Get a module view with proper Inertia support

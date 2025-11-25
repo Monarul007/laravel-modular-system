@@ -80,15 +80,28 @@ class ModuleViewHelper
     public static function publishAssets(string $moduleName): bool
     {
         $modulesPath = config('modular-system.modules_path', base_path('modules'));
-        $sourcePath = "{$modulesPath}/{$moduleName}/resources/js";
-        $targetPath = public_path("modules/{$moduleName}/js");
+        $published = false;
         
-        if (!File::exists($sourcePath)) {
-            return false;
+        // Publish JS assets
+        $jsSource = "{$modulesPath}/{$moduleName}/resources/js";
+        $jsTarget = public_path("modules/{$moduleName}/js");
+        
+        if (File::exists($jsSource)) {
+            File::ensureDirectoryExists($jsTarget);
+            File::copyDirectory($jsSource, $jsTarget);
+            $published = true;
         }
         
-        File::ensureDirectoryExists(dirname($targetPath));
+        // Publish CSS assets
+        $cssSource = "{$modulesPath}/{$moduleName}/resources/css";
+        $cssTarget = public_path("modules/{$moduleName}/css");
         
-        return File::copyDirectory($sourcePath, $targetPath);
+        if (File::exists($cssSource)) {
+            File::ensureDirectoryExists($cssTarget);
+            File::copyDirectory($cssSource, $cssTarget);
+            $published = true;
+        }
+        
+        return $published;
     }
 }
